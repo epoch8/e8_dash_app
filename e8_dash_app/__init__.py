@@ -122,8 +122,9 @@ FEEDBACK_FORM = '''
 '''
 
 class E8Dash(dash.Dash):
-    def __init__(self, external_stylesheets=[], external_scripts=[], *args, **kwargs):
+    def __init__(self, name, external_stylesheets=[], external_scripts=[], *args, **kwargs):
         dash.Dash.__init__(self, 
+            name=name,
             external_stylesheets=external_stylesheets + [URL_PREFIX + i for i in CSS_FILES], 
             external_scripts=external_scripts + [URL_PREFIX + i for i in JS_FILES],
             *args, **kwargs
