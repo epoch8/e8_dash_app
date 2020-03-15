@@ -1,5 +1,7 @@
 from jinja2 import Environment, BaseLoader
 import dash
+import flask
+import pathlib
 
 TITLE = 'Epoch8 – Outsourcing for Machine Learning and Data Analytics projects'
 
@@ -35,17 +37,19 @@ nav_list_template = Environment(loader=BaseLoader).from_string(nav_list)
 template_vars = {"navLinks": NAV_LINKS}
 nav_list_template_out = nav_list_template.render(template_vars)
 
-URL_PREFIX = 'https://storage.cloud.google.com/e8-dash-app/'
+URL_PREFIX = '/e8-dash-app/'
+
+STATIC_DIR = pathlib.Path(__file__).parent / 'assets'
 
 CSS_FILES = [
-    'css/epoch8.css',
-    'css/_normalize.css',
-    'css/style.css',
+    '/e8-dash-app/css/normalize.css',
+    '/e8-dash-app/css/style.css',
+    '/e8-dash-app/css/epoch8.css',
 ]
 
 JS_FILES = [
-    'js/jquery.min.js',
-    'js/script.js',
+    '/e8-dash-app/js/jquery.min.js',
+    '/e8-dash-app/js/script.js',
 ]
 
 INDEX_TEMPLATE = '''
@@ -65,7 +69,7 @@ INDEX_TEMPLATE = '''
                         <div class="header__container">
                             <a class="logo header__logo" href="https://www.epoch8.co/">
                                 <picture>
-                                    <img class="" src="./assets/images/favicon-256x256.png" width="48" height="48" alt="Epoch8.co" title="1">
+                                    <img class="" src="/e8-dash-app/images/favicon-256x256.png" width="48" height="48" alt="Epoch8.co" title="1">
                                 </picture>
                             </a>
                             <a class="header__additional-logo" href="#header">
@@ -125,9 +129,13 @@ class E8Dash(dash.Dash):
     def __init__(self, name, external_stylesheets=[], external_scripts=[], *args, **kwargs):
         dash.Dash.__init__(self, 
             name=name,
-            external_stylesheets=external_stylesheets + [URL_PREFIX + i for i in CSS_FILES], 
-            external_scripts=external_scripts + [URL_PREFIX + i for i in JS_FILES],
+            external_stylesheets=external_stylesheets + [i for i in CSS_FILES], 
+            external_scripts=external_scripts + [i for i in JS_FILES],
             *args, **kwargs
         )
+
+        @self.server.route('/e8-dash-app/<path:path>')
+        def serve_static(path):
+            return flask.send_from_directory(STATIC_DIR, path)
 
         self.index_string = INDEX_TEMPLATE
