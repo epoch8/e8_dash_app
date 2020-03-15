@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "e8_dash_app"
+version = "0.1.0"
+description = ""
+authors = ["Andrey Tatarinov <a@tatarinov.co>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+dash = "^1.9.1"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.4.4"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
