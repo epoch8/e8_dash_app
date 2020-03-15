@@ -8,6 +8,8 @@ setuptools.setup(
         'e8_dash_app.assets',
         'e8_dash_app.assets.css',
         'e8_dash_app.assets.fonts',
+        'e8_dash_app.assets.fonts.RobotoBold',
+        'e8_dash_app.assets.fonts.RobotoRegular',
         'e8_dash_app.assets.images',
         'e8_dash_app.assets.js',
     ],
