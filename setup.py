@@ -5,5 +5,6 @@ setuptools.setup(
     use_scm_version=True,
     packages=[
         'e8_dash_app'
-    ]
+    ],
+    include_package_data=True,
 )
