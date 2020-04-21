@@ -33,10 +33,6 @@ nav_list = '''
     </ul>
 '''
 
-nav_list_template = Environment(loader=BaseLoader).from_string(nav_list)
-template_vars = {"navLinks": NAV_LINKS}
-nav_list_template_out = nav_list_template.render(template_vars)
-
 URL_PREFIX = '/e8-dash-app/'
 
 STATIC_DIR = pathlib.Path(__file__).parent / 'assets'
@@ -52,15 +48,21 @@ JS_FILES = [
     '/e8-dash-app/js/script.js',
 ]
 
+CONTACT_BUTTON = '''
+    <div class="header__actions">
+        <a href="#feedback" class="button header__actions-btn">Contact us</a>
+    </div>
+'''
+
 INDEX_TEMPLATE = '''
     <!DOCTYPE html>
     <html>
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            <title>''' + TITLE + '''</title>
-            {%favicon%}
-            {%css%}
+            <title>{TITLE}</title>
+            {{%favicon%}}
+            {{%css%}}
         </head>
         <body>
             <header class="header" id="header">
@@ -79,23 +81,21 @@ INDEX_TEMPLATE = '''
                         </div>
                     </div>
                     <nav class="header__nav main-nav">
-                        ''' + nav_list_template_out + '''
-                        <div class="header__actions">
-                            <a href="#feedback" class="button header__actions-btn">Contact us</a>
-                        </div>
+                        {NAV_LIST}
+                        {CONTACT_BUTTON}
                     </nav>
                 </div>
             </header>
             <section class="align-items-start">
                 <div class="container">
-                    {%app_entry%}
+                    {{%app_entry%}}
                 </div>
             </section>
             <!-- feedback goes here -->
             <footer>
-                {%config%}
-                {%scripts%}
-                {%renderer%}
+                {{%config%}}
+                {{%scripts%}}
+                {{%renderer%}}
             </footer>
         </body>
     </html>
@@ -126,7 +126,15 @@ FEEDBACK_FORM = '''
 '''
 
 class E8Dash(dash.Dash):
-    def __init__(self, name, external_stylesheets=[], external_scripts=[], *args, **kwargs):
+    def __init__(
+            self, 
+            name, 
+            e8_nav_links=NAV_LINKS,
+            e8_contact_us_button=True,
+            external_stylesheets=[], 
+            external_scripts=[], 
+            *args, **kwargs
+        ):
         dash.Dash.__init__(self, 
             name=name,
             external_stylesheets=external_stylesheets + [i for i in CSS_FILES], 
@@ -138,4 +146,12 @@ class E8Dash(dash.Dash):
         def serve_static(path):
             return flask.send_from_directory(STATIC_DIR, path)
 
-        self.index_string = INDEX_TEMPLATE
+        nav_list_template = Environment(loader=BaseLoader).from_string(nav_list)
+        template_vars = {"navLinks": e8_nav_links}
+        nav_list_template_out = nav_list_template.render(template_vars)
+
+        self.index_string = INDEX_TEMPLATE.format(
+            TITLE=TITLE,
+            NAV_LIST=nav_list_template_out,
+            CONTACT_BUTTON=CONTACT_BUTTON if e8_contact_us_button else ''
+        )
