@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='e8_dash_app',
-    version='0.1.0',
+    version='0.2.0',
     packages=[
         'e8_dash_app',
         'e8_dash_app.assets',
